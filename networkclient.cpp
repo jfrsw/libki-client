@@ -30,6 +30,8 @@ NetworkClient::NetworkClient() : QObject() {
 
     QSettings settings;
 
+    nodeSite = settings.value("node/site").toString();
+
     nodeName = settings.value("node/name").toString();
     // Fail over to hostname if node name isn't defined.
     if ( nodeName.isEmpty() ) {
@@ -52,12 +54,17 @@ NetworkClient::NetworkClient() : QObject() {
         actionOnLogout = LogoutAction::NoAction;
     }
 
+    qDebug() << "SERVER ADDRESS: " << settings.value("server/host").toString();
+    qDebug() << "SERVER PORT   : " << settings.value("server/port").toString();
+    qDebug() << "SERVER SCHEME : " << settings.value("server/scheme").toString();
+
     serviceURL.setHost( settings.value("server/host").toString() );
     serviceURL.setPort( settings.value("server/port").toInt() );
     serviceURL.setScheme( settings.value("server/scheme").toString() );
-    serviceURL.setPath("/api/client/v1_0");
+    serviceURL.setPath("/api/client/register");
 
-	urlQuery.addQueryItem("node", nodeName );
+    urlQuery.addQueryItem("site", nodeSite );
+    urlQuery.addQueryItem("name", nodeName );
     urlQuery.addQueryItem("location", nodeLocation );
 
     registerNode();
@@ -254,7 +261,9 @@ void NetworkClient::processRegisterNodeReply( QNetworkReply* reply ) {
     QScriptEngine engine;
     sc = engine.evaluate("(" + QString(result) + ")");
 
-    if ( !sc.property("registered").toBoolean() ){
+    if ( sc.property("id").toInteger() ){
+        qDebug("Node Registration SUCCEEDED");
+    } else {
         qDebug("Node Registration FAILED");
     }
 

@@ -87,6 +87,7 @@ private:
     QUrl serviceURL;
 	QUrlQuery urlQuery;
 
+    QString nodeSite;
     QString nodeName;
     QString nodeLocation;
     QString nodeAgeLimit;
