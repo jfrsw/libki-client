@@ -181,3 +181,4 @@ function CheckStartAfterShell(): Boolean;
 begin
   Result := (StartupModePage.SelectedValueIndex = 0);
 end;
+
