@@ -50,8 +50,6 @@ Source: "C:\Qt\Tools\mingw492_32\opt\bin\ssleay32.dll"; DestDir: "{app}"; Flags:
 
 [Registry]
 Root: "HKLM"; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: String; ValueName: "Libki"; ValueData: "{app}\libkiclient.exe"; Flags: createvalueifdoesntexist uninsdeletekey; MinVersion: 0.0,5.0; Check: CheckStartAfterShell
-Root: "HKLM32"; Subkey: "Software\Microsoft\Windows NT\CurrentVersion\Winlogon"; ValueType: String; ValueName: "Shell"; ValueData: "{app}\libkiclient.exe"; MinVersion: 0.0,5.0; Check: CheckShellReplacement and not isWin64
-Root: "HKLM64"; Subkey: "Software\Microsoft\Windows NT\CurrentVersion\Winlogon"; ValueType: String; ValueName: "Shell"; ValueData: "{app}\libkiclient.exe"; MinVersion: 0.0,5.0; Check: CheckShellReplacement and IsWin64
 
 [CustomMessages]
 NameAndVersion=%1 version %2
@@ -70,7 +68,6 @@ Filename: "{commonappdata}\Libki\Libki Kiosk Management System.ini"; Section: "s
 Filename: "{commonappdata}\Libki\Libki Kiosk Management System.ini"; Section: "server"; Key: "scheme"; String: "{code:GetScheme}"
 
 Filename: "{commonappdata}\Libki\Libki Kiosk Management System.ini"; Section: "windows"; Key: "EnableStartButton"; String: "1"
-Filename: "{commonappdata}\Libki\Libki Kiosk Management System.ini"; Section: "node"; Key: "start_user_shell"; String: "C:\Windows\explorer.exe"; Check: CheckShellReplacement
 Filename: "{commonappdata}\Libki\Libki Kiosk Management System.ini"; Section: "node"; Key: "logoutAction"; String: "{code:GetLogoutAction}"
 ;logout, reboot, noaction
 Filename: "{commonappdata}\Libki\Libki Kiosk Management System.ini"; Section: "node"; Key: "onlyStopFor"; String: "{code:GetOnlyStopFor}"
@@ -112,8 +109,7 @@ begin
     'Please specify how the Libki client should be started',
     True, False);
   StartupModePage.Add('Automatically start Libki client after normal user shell');
-  StartupModePage.Add('Automatically start Libki instead of user shell (shell replacement)');
-  StartupModePage.Add('Do not start Libki client automatically');
+  StartupModePage.Add('Do not start Libki client automatically (it will have to be started by other means)');
   StartupModePage.SelectedValueIndex := 0;
 
   RebootActionPage := CreateInputOptionPage(StartupModePage.ID,
@@ -186,7 +182,3 @@ begin
   Result := (StartupModePage.SelectedValueIndex = 0);
 end;
 
-function CheckShellReplacement(): Boolean;
-begin
-  Result := (StartupModePage.SelectedValueIndex = 1);
-end;
